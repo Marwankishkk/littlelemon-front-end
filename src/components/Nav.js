@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'
 import Logo from '../images/Logo.svg'; // Adjust the path as per your actual directory structure and filename
 const Nav = () => {
 
@@ -11,13 +12,14 @@ const Nav = () => {
 
             <ul className='nav-links' >
                 <li>
-                    <a href="/">Home</a>
+                    <Link to='/home-page'> Home</Link>
                 </li>
                 <li>
-                    <a href="/">About</a>
+                    <Link to='/about'> About</Link>
                 </li>
                 <li>
-                    <a href="/">Menu</a>
+                    <Link to='/menu'> Menu</Link>
+
                 </li>
                 <li>
                     <a href="/">Reservations</a>
