@@ -1,32 +1,75 @@
+import React, { useReducer, useEffect, useState } from "react";
 import BookingForm from "../components/BookingForm";
-import React, { useReducer } from "react";
+import { fetchAPI, submitAPI } from "../api";
+import { useNavigate } from "react-router-dom";
 
-export const initializeTimes = () => {
-    return [
-        "12:00", "12:30", "13:00", "13:30", "14:00",
-        "14:30", "15:00", "15:30", "16:00", "16:30",
-        "17:00", "17:30", "18:00", "18:30", "19:00",
-        "19:30", "20:00", "20:30", "21:00", "21:30"
-    ];
+// Reducer function to manage state updates
+const reducer = (state, action) => {
+    switch (action.type) {
+        case 'UPDATE_TIMES':
+            return action.payload;
+        default:
+            throw new Error(`Unhandled action type: ${action.type}`);
+    }
 };
 
-export const updateTimes = (state, action) => {
-    // For now, we return the same times regardless of the date
-    // You can later implement logic to filter times based on the selected date
-    if (action.type === 'UPDATE_TIMES') {
-        return initializeTimes();
+// Initialize times with the fetchAPI function
+const initializeTimes = async (date) => {
+    try {
+        return fetchAPI(date); // Directly use fetchAPI
+    } catch (error) {
+        console.error("Error fetching initial times:", error);
+        return [];
     }
-    return state;
+};
+
+// Update times based on the selected date
+const updateTimes = async (date) => {
+    try {
+        return fetchAPI(date); // Directly use fetchAPI
+    } catch (error) {
+        console.error("Error fetching times:", error);
+        return [];
+    }
 };
 
 export default function BookingPage() {
-    const [availableTimes, dispatch] = useReducer(updateTimes, initializeTimes());
+    const [availableTimes, dispatch] = useReducer(reducer, []);
+    const [date, setDate] = useState(new Date());
+    const navigate = useNavigate();
 
-    const handleDateChange = (date) => {
-        dispatch({ type: 'UPDATE_TIMES', date });
+    useEffect(() => {
+        const fetchInitialTimes = async () => {
+            const initialTimes = await initializeTimes(date);
+            dispatch({ type: 'UPDATE_TIMES', payload: initialTimes });
+        };
+        fetchInitialTimes();
+    }, [date]);
+
+    const handleDateChange = async (newDate) => {
+        setDate(new Date(newDate));
+        const times = await updateTimes(new Date(newDate));
+        dispatch({ type: 'UPDATE_TIMES', payload: times });
+    };
+
+    const handleSubmit = async (formData) => {
+        try {
+            const isSubmitted = submitAPI(formData);
+            if (isSubmitted) {
+                navigate("/confirmed");
+            } else {
+                console.error("Failed to submit reservation");
+            }
+        } catch (error) {
+            console.error("Error submitting reservation:", error);
+        }
     };
 
     return (
-        <BookingForm availableTimes={availableTimes} onDateChange={handleDateChange} />
+        <BookingForm
+            availableTimes={availableTimes}
+            onDateChange={handleDateChange}
+            onSubmit={handleSubmit}
+        />
     );
 }

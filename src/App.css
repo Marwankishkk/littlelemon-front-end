@@ -548,3 +548,66 @@ footer {
     font-size: 12px;
   }
 }
+
+/* booking-confirmed page styles */
+.booking-confirmed {
+  background-color: #EDEFEE;
+  /* Matches the form container background */
+  padding: 40px 13%;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin: 90px auto;
+  max-width: 600px;
+}
+
+.booking-confirmed h1 {
+  color: #495E57;
+  /* Matches the primary color used in headers */
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.booking-confirmed p {
+  color: #495E57;
+  /* Consistent text color */
+  font-size: 18px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.booking-confirmed button {
+  background-color: #F4CE14;
+  /* Matches primary button color */
+  color: black;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
+  text-decoration: none;
+}
+
+.booking-confirmed button:hover {
+  background-color: #e3b400;
+  /* Slightly darker for hover effect */
+}
+
+.booking-confirmed .back-button {
+  background-color: #495E57;
+  /* Secondary button color */
+  color: #EDEFEE;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  text-decoration: none;
+}
+
+.booking-confirmed .back-button:hover {
+  background-color: #3c4b47;
+}

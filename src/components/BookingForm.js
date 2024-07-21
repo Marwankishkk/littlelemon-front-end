@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+// BookingForm.js
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const BookingForm = ({ availableTimes, onDateChange }) => {
+const BookingForm = ({ availableTimes, onDateChange, onSubmit }) => {
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
     const [guests, setGuests] = useState(1);
@@ -9,10 +10,7 @@ const BookingForm = ({ availableTimes, onDateChange }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle form submission
-        console.log({ date, time, guests, occasion });
-
-        // Filter out the reserved time from availableTimes
+        onSubmit({ date, time, guests, occasion });
     };
 
     const handleDateChange = (e) => {
@@ -20,7 +18,6 @@ const BookingForm = ({ availableTimes, onDateChange }) => {
         setDate(newDate);
         onDateChange(newDate);
     };
-
 
     return (
         <div className="form-container">
@@ -33,7 +30,7 @@ const BookingForm = ({ availableTimes, onDateChange }) => {
                         type="date"
                         name="date"
                         value={date}
-                        onChange={(e) => setDate(e.target.value)}
+                        onChange={handleDateChange}
                     />
                 </div>
                 <div className="form-group time">
@@ -45,7 +42,7 @@ const BookingForm = ({ availableTimes, onDateChange }) => {
                         onChange={(e) => setTime(e.target.value)}
                     >
                         <option value="" disabled>Select time</option>
-                        {availableTimes.map((timeOption) => (
+                        {Array.isArray(availableTimes) && availableTimes.map((timeOption) => (
                             <option key={timeOption} value={timeOption}>
                                 {timeOption}
                             </option>
@@ -77,9 +74,7 @@ const BookingForm = ({ availableTimes, onDateChange }) => {
                         <option value="Anniversary">Anniversary</option>
                     </select>
                 </div>
-                <Link to='/home-page'>
-                    <button type="submit">Submit</button>
-                </Link>
+                <button type="submit">Submit</button>
             </form>
         </div>
     );

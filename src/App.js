@@ -6,10 +6,9 @@ import Header from './components/Header';
 import Nav from './components/Nav';
 import Menu from './components/Menu';
 import About from './components/about'
-import Testimonials from './components/Testimonials';
-import Footer from './components/Footer';
 import BookingPage from './pages/BookingPage';
 import HomePage from './pages/HomePage';
+import ConfirmedBooking from './components/ConfirmedBooking';
 
 
 function App() {
@@ -24,6 +23,8 @@ function App() {
                     <Route path="/menu" element={<Menu />} />
                     <Route path="/bookingpage" element={<BookingPage />} />
                     <Route path="/home-page" element={<HomePage />} />
+                    <Route path="/confirmed" element={<ConfirmedBooking />} />
+
 
 
                 </Routes>
