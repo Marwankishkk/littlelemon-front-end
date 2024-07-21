@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
-const BookingForm = () => {
+const BookingForm = ({ availableTimes, onDateChange }) => {
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
     const [guests, setGuests] = useState(1);
@@ -11,7 +11,16 @@ const BookingForm = () => {
         e.preventDefault();
         // Handle form submission
         console.log({ date, time, guests, occasion });
+
+        // Filter out the reserved time from availableTimes
     };
+
+    const handleDateChange = (e) => {
+        const newDate = e.target.value;
+        setDate(newDate);
+        onDateChange(newDate);
+    };
+
 
     return (
         <div className="form-container">
@@ -29,13 +38,19 @@ const BookingForm = () => {
                 </div>
                 <div className="form-group time">
                     <label htmlFor="time">Time</label>
-                    <input
+                    <select
                         id="time"
-                        type="time"
                         name="time"
                         value={time}
                         onChange={(e) => setTime(e.target.value)}
-                    />
+                    >
+                        <option value="" disabled>Select time</option>
+                        {availableTimes.map((timeOption) => (
+                            <option key={timeOption} value={timeOption}>
+                                {timeOption}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="form-group guests">
                     <label htmlFor="guests">Number of Guests</label>
