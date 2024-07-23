@@ -1,4 +1,3 @@
-// BookingForm.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -7,10 +6,39 @@ const BookingForm = ({ availableTimes, onDateChange, onSubmit }) => {
     const [time, setTime] = useState("");
     const [guests, setGuests] = useState(1);
     const [occasion, setOccasion] = useState("Birthday");
+    const [formErrors, setFormErrors] = useState({
+        timeError: false,
+        guestsError: false
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit({ date, time, guests, occasion });
+        if (validateForm()) {
+            onSubmit({ date, time, guests, occasion });
+        }
+    };
+
+    const validateForm = () => {
+        let isValid = true;
+        const errors = {
+            timeError: false,
+            guestsError: false
+        };
+
+        // Validate Time
+        if (!time) {
+            errors.timeError = true;
+            isValid = false;
+        }
+
+        // Validate Guests
+        if (guests < 1 || guests > 10) {
+            errors.guestsError = true;
+            isValid = false;
+        }
+
+        setFormErrors(errors);
+        return isValid;
     };
 
     const handleDateChange = (e) => {
@@ -31,6 +59,7 @@ const BookingForm = ({ availableTimes, onDateChange, onSubmit }) => {
                         name="date"
                         value={date}
                         onChange={handleDateChange}
+                        required
                     />
                 </div>
                 <div className="form-group time">
@@ -40,6 +69,7 @@ const BookingForm = ({ availableTimes, onDateChange, onSubmit }) => {
                         name="time"
                         value={time}
                         onChange={(e) => setTime(e.target.value)}
+                        required
                     >
                         <option value="" disabled>Select time</option>
                         {Array.isArray(availableTimes) && availableTimes.map((timeOption) => (
@@ -48,6 +78,7 @@ const BookingForm = ({ availableTimes, onDateChange, onSubmit }) => {
                             </option>
                         ))}
                     </select>
+                    {formErrors.timeError && <span className="error">Please select a time.</span>}
                 </div>
                 <div className="form-group guests">
                     <label htmlFor="guests">Number of Guests</label>
@@ -59,8 +90,10 @@ const BookingForm = ({ availableTimes, onDateChange, onSubmit }) => {
                         min="1"
                         max="10"
                         value={guests}
-                        onChange={(e) => setGuests(e.target.value)}
+                        onChange={(e) => setGuests(parseInt(e.target.value))}
+                        required
                     />
+                    {formErrors.guestsError && <span className="error">Please enter a number between 1 and 10.</span>}
                 </div>
                 <div className="form-group occasion">
                     <label htmlFor="occasion">Occasion</label>
@@ -74,7 +107,7 @@ const BookingForm = ({ availableTimes, onDateChange, onSubmit }) => {
                         <option value="Anniversary">Anniversary</option>
                     </select>
                 </div>
-                <button type="submit">Submit</button>
+                <button type="submit" disabled={!date || !time || guests < 1 || guests > 10}>Submit</button>
             </form>
         </div>
     );

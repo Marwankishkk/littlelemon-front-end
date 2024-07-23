@@ -1,75 +1,90 @@
-import React, { useReducer, useEffect, useState } from "react";
-import BookingForm from "../components/BookingForm";
-import { fetchAPI, submitAPI } from "../api";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-// Reducer function to manage state updates
-const reducer = (state, action) => {
-    switch (action.type) {
-        case 'UPDATE_TIMES':
-            return action.payload;
-        default:
-            throw new Error(`Unhandled action type: ${action.type}`);
-    }
-};
+const BookingForm = ({ availableTimes, onDateChange, onSubmit }) => {
+    const [date, setDate] = useState('');
+    const [time, setTime] = useState('');
+    const [guests, setGuests] = useState(1);
+    const [occasion, setOccasion] = useState('Birthday');
 
-// Initialize times with the fetchAPI function
-const initializeTimes = async (date) => {
-    try {
-        return fetchAPI(date); // Directly use fetchAPI
-    } catch (error) {
-        console.error("Error fetching initial times:", error);
-        return [];
-    }
-};
-
-// Update times based on the selected date
-const updateTimes = async (date) => {
-    try {
-        return fetchAPI(date); // Directly use fetchAPI
-    } catch (error) {
-        console.error("Error fetching times:", error);
-        return [];
-    }
-};
-
-export default function BookingPage() {
-    const [availableTimes, dispatch] = useReducer(reducer, []);
-    const [date, setDate] = useState(new Date());
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const fetchInitialTimes = async () => {
-            const initialTimes = await initializeTimes(date);
-            dispatch({ type: 'UPDATE_TIMES', payload: initialTimes });
-        };
-        fetchInitialTimes();
-    }, [date]);
-
-    const handleDateChange = async (newDate) => {
-        setDate(new Date(newDate));
-        const times = await updateTimes(new Date(newDate));
-        dispatch({ type: 'UPDATE_TIMES', payload: times });
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit({ date, time, guests, occasion });
     };
 
-    const handleSubmit = async (formData) => {
-        try {
-            const isSubmitted = submitAPI(formData);
-            if (isSubmitted) {
-                navigate("/confirmed");
-            } else {
-                console.error("Failed to submit reservation");
-            }
-        } catch (error) {
-            console.error("Error submitting reservation:", error);
-        }
+    const handleDateChange = (e) => {
+        const newDate = e.target.value;
+        setDate(newDate);
+        onDateChange(newDate);
     };
 
     return (
-        <BookingForm
-            availableTimes={availableTimes}
-            onDateChange={handleDateChange}
-            onSubmit={handleSubmit}
-        />
+        <div className="form-container">
+            <h4>Book a Table</h4>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group date">
+                    <label htmlFor="date">Date</label>
+                    <input
+                        id="date"
+                        type="date"
+                        name="date"
+                        value={date}
+                        onChange={handleDateChange}
+                        aria-label="Select booking date"
+                        required
+                    />
+                </div>
+                <div className="form-group time">
+                    <label htmlFor="time">Time</label>
+                    <select
+                        id="time"
+                        name="time"
+                        value={time}
+                        onChange={(e) => setTime(e.target.value)}
+                        aria-label="Select booking time"
+                        required
+                    >
+                        <option value="" disabled>Select time</option>
+                        {Array.isArray(availableTimes) && availableTimes.map((timeOption) => (
+                            <option key={timeOption} value={timeOption}>
+                                {timeOption}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="form-group guests">
+                    <label htmlFor="guests">Number of Guests</label>
+                    <input
+                        id="guests"
+                        type="number"
+                        name="guests"
+                        placeholder="1"
+                        min="1"
+                        max="10"
+                        value={guests}
+                        onChange={(e) => setGuests(e.target.value)}
+                        aria-label="Enter number of guests"
+                        required
+                    />
+                </div>
+                <div className="form-group occasion">
+                    <label htmlFor="occasion">Occasion</label>
+                    <select
+                        id="occasion"
+                        name="occasion"
+                        value={occasion}
+                        onChange={(e) => setOccasion(e.target.value)}
+                        aria-label="Select booking occasion"
+                        required
+                    >
+                        <option value="Birthday">Birthday</option>
+                        <option value="Anniversary">Anniversary</option>
+                    </select>
+                </div>
+                <button type="submit" aria-label="Submit booking">Submit</button>
+            </form>
+        </div>
     );
-}
+};
+
+export default BookingForm;
